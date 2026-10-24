@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state
 
-This is a learning project, built in phases from the spec `docs-copilot.md` (the source of truth for scope, architecture, data model, API, and evals). The phase plan is in the PR history: one branch `phase-NN-name` per phase, merged to `main`. Claude writes the scaffolding and the failing tests that specify behaviour. **The user implements the core algorithms**, so don't write those unless asked. Review and explain instead.
+This is a learning project, built in phases from the spec `docs-copilot.md` (the source of truth for scope, architecture, data model, API, and evals). **The phase plan and progress tracker are in `docs/PLAN.md`. Read its "Progress" section first to see where to resume, and update it whenever a phase starts or finishes.** Each phase gets one branch, `phase-NN-name`, and one PR merged to `main`. Claude writes the scaffolding and the failing tests that specify behaviour. **The user implements the core algorithms**, so don't write those unless asked. Review and explain instead.
 
 ## Commands
 
