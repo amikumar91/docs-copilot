@@ -4,9 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state
 
-This repository has no code yet. It contains only the design spec, `docs-copilot.md`, which is the source of truth for scope, architecture, data model, API, evaluation, and milestones. Read the relevant section of it before you implement anything. The spec defines the architecture but not library versions, so check current library versions when you add dependencies.
+This is a learning project, built in phases from the spec `docs-copilot.md` (the source of truth for scope, architecture, data model, API, and evals). The phase plan is in the PR history: one branch `phase-NN-name` per phase, merged to `main`. Claude writes the scaffolding and the failing tests that specify behaviour. **The user implements the core algorithms**, so don't write those unless asked. Review and explain instead.
 
-Once code exists, replace this section with the real build, lint, test, and run commands.
+## Commands
+
+```bash
+uv sync                                           # install (set UV_LINK_MODE=copy on this machine)
+docker compose -f deploy/docker-compose.yml up -d # postgres (pgvector) + redis
+uv run docs-copilot serve                         # API on :8000 (/healthz, /readyz)
+uv run ruff check . && uv run ruff format --check .
+uv run pyright
+uv run pytest                                     # all tests; CI runs -m "not integration and not live"
+uv run pytest tests/unit/test_health.py::test_healthz
+```
+
+Pytest markers: `integration` needs the compose stack, and `live` calls real model APIs (costs money). Settings come from env vars prefixed with `DOCS_COPILOT_`, except `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`, which use their standard names (see `src/docs_copilot/settings.py`). The CLI lives at `src/docs_copilot/cli.py` (Typer), not at the top-level `cli/` directory the spec shows.
 
 ## What is being built
 
@@ -14,6 +26,7 @@ Once code exists, replace this section with the real build, lint, test, and run 
 
 ## Planned stack and tooling (spec §12, §17)
 
+- Providers: OpenAI `text-embedding-3-small` for embeddings, a local cross-encoder (sentence-transformers) for reranking, and Claude for generation (`claude-haiku-5-5` fast, `claude-sonnet-5-5` strong, `claude-opus-5-5` judge). The first corpus is the FastAPI docs.
 - Python 3.12+, `uv`, Pydantic v2, FastAPI + SSE, Postgres + pgvector + Postgres FTS, Redis, SQLAlchemy + Alembic, OpenTelemetry → Langfuse, Prometheus/Grafana.
 - Lint: `ruff`. Types: mypy or pyright. Tests: pytest. Integration tests use testcontainers Postgres.
 - Local stack: `docker compose up` (from `deploy/docker-compose.yml`) runs the api, worker, postgres, redis, and langfuse. The `local` profile adds Ollama. Model calls go to hosted APIs using keys from `.env` (template in `.env.example`).
