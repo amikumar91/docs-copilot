@@ -24,7 +24,7 @@
 Legend: ⬜ not started · 🔵 in progress · 🟡 PR open · ✅ merged. Update this table at the start and end of every phase.
 
 ## Context
-This is a learning project. The goal is to build the spec'd RAG system **as a learning project**, committed phase by phase. Decisions made with the user:
+The goal is to build the spec'd RAG system **as a learning project**, committed phase by phase. Decisions made with the user:
 - **Collaboration:** Claude scaffolds (project setup, config, wiring, fixtures, and failing tests that specify behaviour). **The user implements the core algorithms**, and Claude reviews and explains. Each phase lists a "You build" section.
 - **Providers:** OpenAI `text-embedding-3-small` (1536-d) for embeddings. A local cross-encoder (`sentence-transformers`, e.g. `cross-encoder/ms-marco-MiniLM-L-6-v2` or `BAAI/bge-reranker-base`) for reranking. Claude for generation (fast: `claude-haiku-5-5`, strong: `claude-sonnet-5-5`, judge: `claude-opus-5-5`).
 - **First corpus:** the FastAPI docs (`github.com/fastapi/fastapi`, path `docs/en/docs/`).
