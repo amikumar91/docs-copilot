@@ -2,12 +2,12 @@
 
 ## Progress
 
-**Resume here:** finish Phase 0. Start Docker Desktop, verify `docker compose up`, then merge PR #1. After that, start Phase 1 on branch `phase-01-storage`.
+**Resume here:** Phase 1 on branch `phase-01-storage`. Local stack data is bind-mounted to `data/` (git-ignored).
 
 | Phase | Name | Status | PR |
 |-------|------|--------|----|
-| 0 | Repo bootstrap | 🟡 PR open, CI green, compose check pending | [#1](https://github.com/amikumar91/docs-copilot/pull/1) |
-| 1 | Storage & data model | ⬜ Not started | |
+| 0 | Repo bootstrap | ✅ Merged | [#1](https://github.com/amikumar91/docs-copilot/pull/1) |
+| 1 | Storage & data model | 🔵 In progress | |
 | 2 | Ingestion: Git → parser → chunker | ⬜ | |
 | 3 | Embeddings & dense search | ⬜ | |
 | 4 | Golden dataset v1 + retrieval metrics | ⬜ | |
@@ -26,7 +26,7 @@ Legend: ⬜ not started · 🔵 in progress · 🟡 PR open · ✅ merged. Updat
 ## Context
 The goal is to build the spec'd RAG system **as a learning project**, committed phase by phase. Decisions made with the user:
 - **Collaboration:** Claude scaffolds (project setup, config, wiring, fixtures, and failing tests that specify behaviour). **The user implements the core algorithms**, and Claude reviews and explains. Each phase lists a "You build" section.
-- **Providers:** OpenAI `text-embedding-3-small` (1536-d) for embeddings. A local cross-encoder (`sentence-transformers`, e.g. `cross-encoder/ms-marco-MiniLM-L-6-v2` or `BAAI/bge-reranker-base`) for reranking. Claude for generation (fast: `claude-haiku-5-5`, strong: `claude-sonnet-5-5`, judge: `claude-opus-5-5`).
+- **Providers:** Voyage AI `voyage-3.5-lite` (1024-d, free-tier tokens, `VOYAGE_API_KEY`) for embeddings, chosen over OpenAI because there's no OpenAI key. Use `input_type="document"` when indexing and `"query"` when searching. A local open model via Ollama (e.g. Qwen3-Embedding-0.6B or bge-m3) is the optional keyless fallback and an ablation arm. A local cross-encoder (`sentence-transformers`, e.g. `cross-encoder/ms-marco-MiniLM-L-6-v2` or `BAAI/bge-reranker-base`) for reranking. Claude for generation (fast: `claude-haiku-5-5`, strong: `claude-sonnet-5-5`, judge: `claude-opus-5-5`).
 - **First corpus:** the FastAPI docs (`github.com/fastapi/fastapi`, path `docs/en/docs/`).
 - **Git:** `git init` locally, create a GitHub repo, and use **one branch + PR per phase** (`phase-NN-name`). Merge to `main` when the phase's "Done when" is met.
 
@@ -52,7 +52,7 @@ Environment notes: Windows 11. Requires Docker Desktop (Postgres+pgvector, Redis
 - **Done when:** syncing FastAPI docs puts its chunks in Postgres and the golden chunker tests pass. ADR-3 is drafted.
 
 ## Phase 3 — Embeddings & dense search
-- **Claude:** the provider interfaces `EmbeddingModel` / `Reranker` / `ChatModel` (`providers/`), an OpenAI embedding implementation, a per-model price table, record/replay fixtures for API calls, `POST /v1/search`, and the CLI `search`.
+- **Claude:** the provider interfaces `EmbeddingModel` / `Reranker` / `ChatModel` (`providers/`), a Voyage embedding implementation (`voyageai` SDK, batches up to 1000 texts per call), a per-model price table, record/replay fixtures for API calls, `POST /v1/search`, and the CLI `search`.
 - **You build:** the embedding worker (batching, retry with backoff, idempotent on `(chunk_hash, embedding_model)`, refuses to mix models) and the pgvector cosine top-k query with metadata filters.
 - **Done when:** searching a real FastAPI question returns relevant chunks.
 

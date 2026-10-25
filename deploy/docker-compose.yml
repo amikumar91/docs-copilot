@@ -8,7 +8,8 @@ services:
       POSTGRES_PASSWORD: docs
       POSTGRES_DB: docs_copilot
     ports: ["5432:5432"]
-    volumes: [pgdata:/var/lib/postgresql/data]
+    # Bind mounts resolve relative to this file: ../data == <repo>/data (git-ignored)
+    volumes: [../data/postgres:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U docs -d docs_copilot"]
       interval: 5s
@@ -16,11 +17,10 @@ services:
 
   redis:
     image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
     ports: ["6379:6379"]
+    volumes: [../data/redis:/data]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       retries: 10
-
-volumes:
-  pgdata:

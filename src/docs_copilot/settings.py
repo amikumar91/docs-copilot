@@ -17,10 +17,10 @@ class Settings(BaseSettings):
 
     # Provider keys use their conventional names (no prefix).
     anthropic_api_key: SecretStr | None = Field(default=None, alias="ANTHROPIC_API_KEY")
-    openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY")
+    voyage_api_key: SecretStr | None = Field(default=None, alias="VOYAGE_API_KEY")
 
-    embedding_model: str = "text-embedding-3-small"
-    embedding_dim: int = 1536
+    embedding_model: str = "voyage-3.5-lite"
+    embedding_dim: int = 1024
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     chat_model_fast: str = "claude-haiku-5-5"
     chat_model_strong: str = "claude-sonnet-5-5"

@@ -18,7 +18,7 @@ uv run pytest                                     # all tests; CI runs -m "not i
 uv run pytest tests/unit/test_health.py::test_healthz
 ```
 
-Pytest markers: `integration` needs the compose stack, and `live` calls real model APIs (costs money). Settings come from env vars prefixed with `DOCS_COPILOT_`, except `ANTHROPIC_API_KEY` and `OPENAI_API_KEY`, which use their standard names (see `src/docs_copilot/settings.py`). The CLI lives at `src/docs_copilot/cli.py` (Typer), not at the top-level `cli/` directory the spec shows.
+Pytest markers: `integration` needs the compose stack, and `live` calls real model APIs (costs money). Settings come from env vars prefixed with `DOCS_COPILOT_`, except `ANTHROPIC_API_KEY` and `VOYAGE_API_KEY`, which use their standard names (see `src/docs_copilot/settings.py`). The CLI lives at `src/docs_copilot/cli.py` (Typer), not at the top-level `cli/` directory the spec shows.
 
 ## What is being built
 
@@ -26,7 +26,7 @@ Pytest markers: `integration` needs the compose stack, and `live` calls real mod
 
 ## Planned stack and tooling (spec §12, §17)
 
-- Providers: OpenAI `text-embedding-3-small` for embeddings, a local cross-encoder (sentence-transformers) for reranking, and Claude for generation (`claude-haiku-5-5` fast, `claude-sonnet-5-5` strong, `claude-opus-5-5` judge). The first corpus is the FastAPI docs.
+- Providers: Voyage AI `voyage-3.5-lite` (1024-d) for embeddings (replaces the spec's OpenAI choice; see `docs/PLAN.md`), a local cross-encoder (sentence-transformers) for reranking, and Claude for generation (`claude-haiku-5-5` fast, `claude-sonnet-5-5` strong, `claude-opus-5-5` judge). The first corpus is the FastAPI docs.
 - Python 3.12+, `uv`, Pydantic v2, FastAPI + SSE, Postgres + pgvector + Postgres FTS, Redis, SQLAlchemy + Alembic, OpenTelemetry → Langfuse, Prometheus/Grafana.
 - Lint: `ruff`. Types: mypy or pyright. Tests: pytest. Integration tests use testcontainers Postgres.
 - Local stack: `docker compose up` (from `deploy/docker-compose.yml`) runs the api, worker, postgres, redis, and langfuse. The `local` profile adds Ollama. Model calls go to hosted APIs using keys from `.env` (template in `.env.example`).
